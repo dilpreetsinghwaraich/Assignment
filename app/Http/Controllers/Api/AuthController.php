@@ -64,11 +64,11 @@ class AuthController extends Controller
             ], 400);
         }
 
-        $activation_key = sha1(mt_rand(10000,99999).time().$request->input('email'));
+        $otp = rand(000000, 111111);
 
         $user = new User();
         $user->email = $request->email;
-        $user->activation_key = $activation_key;
+        $user->activation_key = $otp;
         $user->user_role = 'user';
         $user->created_at = new DateTime;
         $user->updated_at = new DateTime;
@@ -77,15 +77,16 @@ class AuthController extends Controller
         $name = 'Dear';
         $email = $request->input('email');
         $emailSubject = 'Activation Link At Demo Site';
+        $activation_key = $otp;
         $emailBody = view('Email.RegisterVerifyEmailLink', compact('name', 'activation_key', 'email'));
         $this->SendEmail($email, $emailSubject, $emailBody, [], '', '', '', '');
-        return Response()->json(['status'=>'success', 'message' => 'For account Activation email has been sent you.', 'response' => [] ],200);
+        return Response()->json(['status'=>'success', 'message' => 'For account Activation email has been sent you.', 'response' => compact('otp') ],200);
 
     }
 
     public function storeCompleteRules() {
         return [
-            'activation_key' => 'required',
+            'otp' => 'required',
             'name' => 'required',
             'user_name' => 'required|string|min:4|max:20|unique:users',
             'avatar' => 'required|mimes:jpeg,jpg,png,gif',
@@ -105,7 +106,7 @@ class AuthController extends Controller
                 'message' => "Image dimension is required: 256px x 256px.",
             ], 400);
         }
-        $activation_key = $request->activation_key;
+        $activation_key = $request->otp;
 
         $user = User::where('activation_key', $activation_key)->get()->first();
         if (!$user) {

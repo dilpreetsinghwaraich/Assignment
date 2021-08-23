@@ -27,7 +27,7 @@ class Controller extends BaseController
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
         // More headers
-        $headers .= 'From: Infiway <noreply@infiway.ae>' . "\r\n";
+        $headers .= 'From: Infiway <noreply@assignment.in>' . "\r\n";
         //$emailBody=CleanHtml($emailBody);
         return mail($emailTo,$emailSubject,$emailBody,$headers);
         return false;
